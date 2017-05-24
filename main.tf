@@ -22,39 +22,39 @@ resource "azurerm_resource_group" "rs_group" {
     }
 }
 
-resource "azurerm_network_security_group" "sg" {
-    name = "${var.env_name}SG"
-    location = "${var.location}"
-    resource_group_name = "${azurerm_resource_group.rs_group.name}"
+# resource "azurerm_network_security_group" "sg" {
+#     name = "${var.env_name}SG"
+#     location = "${var.location}"
+#     resource_group_name = "${azurerm_resource_group.rs_group.name}"
 
-    security_rule {
-        name = "localhttp"
-        protocol = "Tcp"
-        source_port_range = "*"
-        destination_port_range = "3306"
-        source_address_prefix = "${var.subnet}"
-        destination_address_prefix = "*"
-        access = "Allow"
-        priority = 1001
-        direction = "Inbound"
-    }
+#     security_rule {
+#         name = "localhttp"
+#         protocol = "Tcp"
+#         source_port_range = "*"
+#         destination_port_range = "3306"
+#         source_address_prefix = "${var.subnet}"
+#         destination_address_prefix = "*"
+#         access = "Allow"
+#         priority = 1001
+#         direction = "Inbound"
+#     }
 
-    security_rule {
-        name = "remoteSSH"
-        protocol = "Tcp"
-        source_port_range = "*"
-        destination_port_range = "22"
-        source_address_prefix = "${var.remote_ip}"
-        destination_address_prefix = "*"
-        access = "Allow"
-        priority = 2000
-        direction = "Inbound"
-    }
+#     security_rule {
+#         name = "remoteSSH"
+#         protocol = "Tcp"
+#         source_port_range = "*"
+#         destination_port_range = "22"
+#         source_address_prefix = "${var.remote_ip}"
+#         destination_address_prefix = "*"
+#         access = "Allow"
+#         priority = 2000
+#         direction = "Inbound"
+#     }
 
-    tags {
-        environment = "${var.env_name}"
-    }
-}
+#     tags {
+#         environment = "${var.env_name}"
+#     }
+# }
 
 
 # - - - 
