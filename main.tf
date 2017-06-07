@@ -100,18 +100,18 @@ resource "azurerm_lb_backend_address_pool" "lb_pool" {
 # PORT-PROBE
 # http lb
 
-resource "azurerm_lb_rule" "lb_rule_http_port" {
-    count = "${var.use_port_probe}"
-    resource_group_name = "${azurerm_resource_group.rs_group.name}"
-    loadbalancer_id = "${azurerm_lb.lb.id}"
-    name = "http"
-    protocol = "Tcp"
-    frontend_port = 3306
-    backend_port = 3306
-    backend_address_pool_id = "${azurerm_lb_backend_address_pool.lb_pool.id}"
-    probe_id = "${azurerm_lb_probe.lb-probe-port.id}"
-    frontend_ip_configuration_name = "PublicIPAddress"
-}
+# resource "azurerm_lb_rule" "lb_rule_http_port" {
+#     count = "${var.use_port_probe}"
+#     resource_group_name = "${azurerm_resource_group.rs_group.name}"
+#     loadbalancer_id = "${azurerm_lb.lb.id}"
+#     name = "http"
+#     protocol = "Tcp"
+#     frontend_port = 3306
+#     backend_port = 3306
+#     backend_address_pool_id = "${azurerm_lb_backend_address_pool.lb_pool.id}"
+#     probe_id = "${azurerm_lb_probe.lb-probe-port.id}"
+#     frontend_ip_configuration_name = "PublicIPAddress"
+# }
 
 # ssl lb
 
@@ -132,18 +132,18 @@ resource "azurerm_lb_rule" "lb_rule_ssh_port" {
 # URL-PROBE!
 # http lb
 
-resource "azurerm_lb_rule" "lb_rule_http_url" {
-    count = "${var.use_url_probe}"
-    resource_group_name = "${azurerm_resource_group.rs_group.name}"
-    loadbalancer_id = "${azurerm_lb.lb.id}"
-    name = "http"
-    protocol = "Tcp"
-    frontend_port = 3306
-    backend_port = 3306
-    backend_address_pool_id = "${azurerm_lb_backend_address_pool.lb_pool.id}"
-    probe_id = "${azurerm_lb_probe.lb-probe-http.id}"
-    frontend_ip_configuration_name = "PublicIPAddress"
-}
+# resource "azurerm_lb_rule" "lb_rule_http_url" {
+#     count = "${var.use_url_probe}"
+#     resource_group_name = "${azurerm_resource_group.rs_group.name}"
+#     loadbalancer_id = "${azurerm_lb.lb.id}"
+#     name = "http"
+#     protocol = "Tcp"
+#     frontend_port = 3306
+#     backend_port = 3306
+#     backend_address_pool_id = "${azurerm_lb_backend_address_pool.lb_pool.id}"
+#     probe_id = "${azurerm_lb_probe.lb-probe-http.id}"
+#     frontend_ip_configuration_name = "PublicIPAddress"
+# }
 
 # ssl lb
 
@@ -221,11 +221,11 @@ resource "azurerm_lb_backend_address_pool" "ilb_pool" {
 # PORT-PROBE
 # http lb
 
-resource "azurerm_lb_rule" "ilb_rule_http_port" {
+resource "azurerm_lb_rule" "ilb_rule_mysql_port" {
     count = "${var.use_port_probe}"
     resource_group_name = "${azurerm_resource_group.rs_group.name}"
     loadbalancer_id = "${azurerm_lb.ilb.id}"
-    name = "http"
+    name = "port"
     protocol = "Tcp"
     frontend_port = 3306
     backend_port = 3306
@@ -257,7 +257,7 @@ resource "azurerm_lb_rule" "ilb_rule_http_url" {
     count = "${var.use_url_probe}"
     resource_group_name = "${azurerm_resource_group.rs_group.name}"
     loadbalancer_id = "${azurerm_lb.ilb.id}"
-    name = "http"
+    name = "port"
     protocol = "Tcp"
     frontend_port = 3306
     backend_port = 3306
