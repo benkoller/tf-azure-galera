@@ -372,7 +372,7 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
         ip_configuration {
             name = "TestIPConfiguration"
             subnet_id = "${var.subnet_id}"
-            load_balancer_backend_address_pool_ids = ["${azurerm_lb_backend_address_pool.lb_pool.id}"]
+            load_balancer_backend_address_pool_ids = ["${azurerm_lb_backend_address_pool.lb_pool.id}", "${azurerm_lb_backend_address_pool.ilb_pool.id}"]
         }
     }
 
