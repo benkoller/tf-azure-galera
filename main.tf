@@ -204,6 +204,7 @@ resource "azurerm_lb" "ilb" {
   frontend_ip_configuration {
     name                 = "InternalIPAddress"
     private_ip_address_allocation = "Dynamic"
+    subnet_id = "${var.subnet_id}"
   }
 }
 
