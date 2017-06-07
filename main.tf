@@ -192,28 +192,12 @@ resource "azurerm_lb_probe" "lb-probe-http" {
 # - - - - - - - - - - 
 # - - - - - - - - - - 
 
-
-# # - - - 
-# # Public loadbalancer IP
-
-# resource "azurerm_public_ip" "elb_pip" {
-#     name = "${var.env_name}PIP"
-#     location = "${var.location}"
-#     resource_group_name = "${azurerm_resource_group.rs_group.name}"
-#     public_ip_address_allocation = "static"
-#     domain_name_label = "p${var.env_name}"
-
-#     tags {
-#         environment = "${var.env_name}"
-#     }
-# }
-
 # - - - 
 # Load balancer block
 # Internal Load balancer
 
 resource "azurerm_lb" "ilb" {
-  name                = "${var.env_name}ELB"
+  name                = "${var.env_name}ILB"
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.rs_group.name}"
 
@@ -227,7 +211,7 @@ resource "azurerm_lb" "ilb" {
 
 resource "azurerm_lb_backend_address_pool" "ilb_pool" {
   resource_group_name = "${azurerm_resource_group.rs_group.name}"
-  loadbalancer_id     = "${azurerm_lb.elb.id}"
+  loadbalancer_id     = "${azurerm_lb.ilb.id}"
   name                = "ilbPool"
 }
 
