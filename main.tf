@@ -184,6 +184,149 @@ resource "azurerm_lb_probe" "lb-probe-http" {
     interval_in_seconds = 60
 }
 
+# - - - - - - - - - -  
+# - - - - - - - - - - 
+# - I N T E R N A L - 
+# - - - L O A D - - - 
+# - B A L A N C E R - 
+# - - - - - - - - - - 
+# - - - - - - - - - - 
+
+
+# # - - - 
+# # Public loadbalancer IP
+
+# resource "azurerm_public_ip" "elb_pip" {
+#     name = "${var.env_name}PIP"
+#     location = "${var.location}"
+#     resource_group_name = "${azurerm_resource_group.rs_group.name}"
+#     public_ip_address_allocation = "static"
+#     domain_name_label = "p${var.env_name}"
+
+#     tags {
+#         environment = "${var.env_name}"
+#     }
+# }
+
+# - - - 
+# Load balancer block
+# Internal Load balancer
+
+resource "azurerm_lb" "ilb" {
+  name                = "${var.env_name}ELB"
+  location            = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.rs_group.name}"
+
+  frontend_ip_configuration {
+    name                 = "InternalIPAddress"
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+# LB address pool
+
+resource "azurerm_lb_backend_address_pool" "ilb_pool" {
+  resource_group_name = "${azurerm_resource_group.rs_group.name}"
+  loadbalancer_id     = "${azurerm_lb.elb.id}"
+  name                = "ilbPool"
+}
+
+# - - -
+# Load balancer behaviour
+# PORT-PROBE
+# http lb
+
+resource "azurerm_lb_rule" "ilb_rule_http_port" {
+    count = "${var.use_port_probe}"
+    resource_group_name = "${azurerm_resource_group.rs_group.name}"
+    loadbalancer_id = "${azurerm_lb.ilb.id}"
+    name = "http"
+    protocol = "Tcp"
+    frontend_port = 3306
+    backend_port = 3306
+    backend_address_pool_id = "${azurerm_lb_backend_address_pool.ilb_pool.id}"
+    probe_id = "${azurerm_lb_probe.ilb-probe-port.id}"
+    frontend_ip_configuration_name = "InternalIPAddress"
+}
+
+# ssl lb
+
+resource "azurerm_lb_rule" "ilb_rule_ssh_port" {
+    count = "${var.use_port_probe}"
+    resource_group_name = "${azurerm_resource_group.rs_group.name}"
+    loadbalancer_id = "${azurerm_lb.ilb.id}"
+    name = "ssh"
+    protocol = "Tcp"
+    frontend_port = 22
+    backend_port = 22
+    backend_address_pool_id = "${azurerm_lb_backend_address_pool.ilb_pool.id}"
+    probe_id = "${azurerm_lb_probe.ilb-probe-port.id}"
+    frontend_ip_configuration_name = "InternalIPAddress"
+}
+
+# Load balancer behaviour
+# URL-PROBE!
+# http lb
+
+resource "azurerm_lb_rule" "ilb_rule_http_url" {
+    count = "${var.use_url_probe}"
+    resource_group_name = "${azurerm_resource_group.rs_group.name}"
+    loadbalancer_id = "${azurerm_lb.ilb.id}"
+    name = "http"
+    protocol = "Tcp"
+    frontend_port = 3306
+    backend_port = 3306
+    backend_address_pool_id = "${azurerm_lb_backend_address_pool.ilb_pool.id}"
+    probe_id = "${azurerm_lb_probe.ilb-probe-http.id}"
+    frontend_ip_configuration_name = "InternalIPAddress"
+}
+
+# ssl lb
+
+resource "azurerm_lb_rule" "ilb_rule_ssh_url" {
+    count = "${var.use_url_probe}"
+    resource_group_name = "${azurerm_resource_group.rs_group.name}"
+    loadbalancer_id = "${azurerm_lb.ilb.id}"
+    name = "ssh"
+    protocol = "Tcp"
+    frontend_port = 22
+    backend_port = 22
+    backend_address_pool_id = "${azurerm_lb_backend_address_pool.ilb_pool.id}"
+    probe_id = "${azurerm_lb_probe.ilb-probe-http.id}"
+    frontend_ip_configuration_name = "InternalIPAddress"
+}
+
+
+# - - -
+# probes
+
+resource "azurerm_lb_probe" "ilb-probe-port" {
+    count = "${var.use_port_probe}"
+    resource_group_name = "${azurerm_resource_group.rs_group.name}"
+    loadbalancer_id = "${azurerm_lb.ilb.id}"
+    protocol = "Tcp"
+    name = "probe${var.probe_port}"
+    port = "${var.probe_port}"
+    interval_in_seconds = 60
+}
+
+resource "azurerm_lb_probe" "ilb-probe-http" {
+    count = "${var.use_url_probe}"
+    resource_group_name = "${azurerm_resource_group.rs_group.name}"
+    loadbalancer_id = "${azurerm_lb.ilb.id}"
+    protocol = "Http"
+    name = "probeHttp"
+    request_path = "${var.probe_url}"
+    interval_in_seconds = 60
+}
+
+# - - - - - - - - - - 
+# - - - R E S T - - -
+# - - - - - - - - - - 
+
+
+
+
 # - - -
 # Storage container
 resource "azurerm_storage_account" "account" {
